@@ -22,13 +22,13 @@ object Boot extends App {
     val config = Config.load()
 
     new DatabaseMigrationManager(
-      config.database.jdbcUrl,
+      config.database.url,
       config.database.username,
       config.database.password
     ).migrateDatabaseSchema()
 
     val databaseConnector = new DatabaseConnector(
-      config.database.jdbcUrl,
+      config.database.url,
       config.database.username,
       config.database.password
     )
@@ -39,8 +39,8 @@ object Boot extends App {
     val usersService = new UserProfileService(userProfileStorage)
     val usersRouter  = new ProfileRoute(config.secretKey, usersService)
 
-    val authService  = new AuthService(authDataStorage, config.secretKey)
-    val authRouter   = new AuthRoute(authService)
+    val authService = new AuthService(authDataStorage, config.secretKey)
+    val authRouter  = new AuthRoute(authService)
 
     val httpRoute = new HttpRoute(List(usersRouter.route, authRouter.route))
 

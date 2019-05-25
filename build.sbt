@@ -49,6 +49,8 @@ libraryDependencies ++= {
     // Validation library
     "com.wix" %% "accord-core" % "0.7.1",
 
+    "com.h2database" % "h2" % "1.4.192",
+
     // Http client, used currently only for IT test
     "com.softwaremill.sttp" %% "core" % sttpV % Test,
     "com.softwaremill.sttp" %% "akka-http-backend" % sttpV % Test,

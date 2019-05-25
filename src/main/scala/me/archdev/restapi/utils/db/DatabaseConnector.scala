@@ -1,10 +1,11 @@
 package me.archdev.restapi.utils.db
 
 import com.zaxxer.hikari.{ HikariConfig, HikariDataSource }
+import slick.jdbc.PostgresProfile
 
 class DatabaseConnector(jdbcUrl: String, dbUser: String, dbPassword: String) {
 
-  private val hikariDataSource = {
+  private val dataSource = {
     val hikariConfig = new HikariConfig()
     hikariConfig.setJdbcUrl(jdbcUrl)
     hikariConfig.setUsername(dbUser)
@@ -13,10 +14,10 @@ class DatabaseConnector(jdbcUrl: String, dbUser: String, dbPassword: String) {
     new HikariDataSource(hikariConfig)
   }
 
-  val profile = slick.jdbc.PostgresProfile
+  val profile: PostgresProfile.type = slick.jdbc.PostgresProfile
   import profile.api._
 
-  val db = Database.forDataSource(hikariDataSource, None)
+  val db: profile.backend.DatabaseDef = Database.forDataSource(dataSource, None)
   db.createSession()
 
 }

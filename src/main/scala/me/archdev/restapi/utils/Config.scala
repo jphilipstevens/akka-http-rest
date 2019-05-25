@@ -5,7 +5,7 @@ import pureconfig.loadConfig
 case class Config(secretKey: String, http: HttpConfig, database: DatabaseConfig)
 
 object Config {
-  def load() =
+  def load(): Config =
     loadConfig[Config] match {
       case Right(config) => config
       case Left(error) =>
@@ -14,4 +14,4 @@ object Config {
 }
 
 private[utils] case class HttpConfig(host: String, port: Int)
-private[utils] case class DatabaseConfig(jdbcUrl: String, username: String, password: String)
+private[utils] case class DatabaseConfig(url: String, username: String, password: String)
