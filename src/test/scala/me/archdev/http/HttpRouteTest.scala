@@ -5,6 +5,7 @@ import me.archdev.BaseServiceTest
 import me.archdev.restapi.core.auth.AuthService
 import me.archdev.restapi.core.profiles.UserProfileService
 import me.archdev.restapi.http.HttpRoute
+import me.archdev.restapi.http.routes.{AuthRoute, ProfileRoute}
 
 class HttpRouteTest extends BaseServiceTest {
 
@@ -26,9 +27,12 @@ class HttpRouteTest extends BaseServiceTest {
   trait Context {
     val secretKey = "secret"
     val userProfileService: UserProfileService = mock[UserProfileService]
-    val authService: AuthService = mock[AuthService]
+    val userRoute = new ProfileRoute(secretKey, userProfileService)
 
-    val httpRoute: Route = new HttpRoute(userProfileService, authService, secretKey).route
+    val authService: AuthService = mock[AuthService]
+    val authRouter = new AuthRoute(authService)
+
+    val httpRoute: Route = new HttpRoute(List(userRoute.route, authRouter.route)).route
   }
 
 }

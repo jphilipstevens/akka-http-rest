@@ -6,6 +6,7 @@ import akka.stream.ActorMaterializer
 import me.archdev.restapi.core.auth.{ AuthService, JdbcAuthDataStorage }
 import me.archdev.restapi.core.profiles.{ JdbcUserProfileStorage, UserProfileService }
 import me.archdev.restapi.http.HttpRoute
+import me.archdev.restapi.http.routes.{ AuthRoute, ProfileRoute }
 import me.archdev.restapi.utils.Config
 import me.archdev.restapi.utils.db.{ DatabaseConnector, DatabaseMigrationManager }
 
@@ -36,8 +37,12 @@ object Boot extends App {
     val authDataStorage    = new JdbcAuthDataStorage(databaseConnector)
 
     val usersService = new UserProfileService(userProfileStorage)
+    val usersRouter  = new ProfileRoute(config.secretKey, usersService)
+
     val authService  = new AuthService(authDataStorage, config.secretKey)
-    val httpRoute    = new HttpRoute(usersService, authService, config.secretKey)
+    val authRouter   = new AuthRoute(authService)
+
+    val httpRoute = new HttpRoute(List(usersRouter.route, authRouter.route))
 
     Http().bindAndHandle(httpRoute.route, config.http.host, config.http.port)
   }
